@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,12 +48,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          # password: ${{ secrets.SUPER_SECRET_GITHUB_TOKEN }} # Use this if you have a personal access token
 
       - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/johnafariogun/go-ci-cd-app:latest . 
+        run: docker build -t ghcr.io/johnafariogun/go-ci-cd-app:latest .
 
       - name: Push Docker image
-        run: |
-          docker push ghcr.io/johnafariogun/go-ci-cd-app:latest
+        run: docker push ghcr.io/johnafariogun/go-ci-cd-app:latest
