@@ -23,10 +23,12 @@ jobs:
         run: go build -o server server.go
 
       - name: Test binary
-        run: ./server &
+        run: |
+          ./server &
           sleep 5
           curl -f http://localhost:8080/ || exit 1
           pkill server
+
 
   docker:
     needs: build
