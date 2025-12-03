@@ -48,8 +48,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/go-ci-cd-app:latest .
+          docker build -t ghcr.io/johnafariogun/go-ci-cd-app:latest . 
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}/go-ci-cd-app:latest
+          docker push ghcr.io/johnafariogun/go-ci-cd-app:latest
