@@ -1,0 +1,56 @@
+name: Go CI/CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build binary
+        run: go build -o server server.go
+
+      - name: Test binary
+        run: |
+          ./server &
+          sleep 5
+          curl -f http://localhost:8080/ || exit 1
+          pkill server
+
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ghcr.io/johnafariogun/go-ci-cd-app:latest .
+
+      - name: Push Docker image
+        run: docker push ghcr.io/johnafariogun/go-ci-cd-app:latest
